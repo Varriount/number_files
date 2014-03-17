@@ -45,8 +45,8 @@ const
   param_length = @["-l", "--length"]
   help_length = "Minimum length of the number mask, padded to zeros."
 
-  param_start = @["-start", "--start"]
-  help_start = "Value of the first number assigned, by default zero."
+  param_from = @["-f", "--from"]
+  help_from = "Value of the first number assigned, by default zero."
 
 
 proc process_commandline() =
@@ -56,14 +56,14 @@ proc process_commandline() =
     names = param_help, help_text = help_help))
   PARAMS.add(new_parameter_specification(names = param_version,
     help_text = help_version))
-  PARAMS.add(new_parameter_specification(PK_STRING, names = param_postfix,
+  PARAMS.add(new_parameter_specification(names = param_postfix,
     help_text = help_postfix))
   PARAMS.add(new_parameter_specification(PK_STRING, names = param_separator,
     help_text = help_separator))
   PARAMS.add(new_parameter_specification(PK_INT, names = param_length,
     help_text = help_length))
-  PARAMS.add(new_parameter_specification(PK_INT, names = param_start,
-    help_text = help_start))
+  PARAMS.add(new_parameter_specification(PK_INT, names = param_from,
+    help_text = help_from))
 
   G.params = parse(PARAMS)
 
@@ -84,10 +84,10 @@ proc process_commandline() =
       echo_help(params)
       quit()
 
-  if G.params.options.has_key(param_start[0]):
-    G.start = G.params.options[param_start[0]].int_val
+  if G.params.options.has_key(param_from[0]):
+    G.start = G.params.options[param_from[0]].int_val
     if G.start < 1:
-      echo "The start value has to be a positive number."
+      echo "The from value has to be a positive number."
       echo_help(params)
       quit()
 
@@ -100,16 +100,25 @@ proc process_commandline() =
 
 
 proc number_files(input_files: seq[string], postfix: bool,
-    separator: string, padding, start: int) =
+    sep: string, padding, start: int) =
   ## Numbers input_files from start to infinite.
   if input_files.len < 1: return
   # Calculates the ending number of the sequence to figure out string padding.
   let
     last_value = start + len(input_files) - 1
-    padding = min(padding, len($last_value))
+    padding = max(padding, len($last_value))
   
-  echo "Hey!"
-
+  var counter = start
+  for path in input_files:
+    var (dir, name, ext) = path.split_file
+    let
+      value = $counter
+      str = repeat_char(max(0, padding - value.len), '0') & value
+      target = if postfix: name & sep & str else: str & sep & name
+    echo "'" & name & ext & "' -> '" & target & ext & "'"
+    let dest = dir/(target & ext)
+    path.move_file(dest)
+    counter += 1
 
 
 when isMainModule:
