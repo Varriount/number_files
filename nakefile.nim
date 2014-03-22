@@ -17,11 +17,11 @@ let
 
 when defined(macosx):
   const
-    local_install = "Copies " & name & " to your ~/bin directory " &
-      "and installs a workflow into ~/Library/Services/ for Finder"
+    local_install = "Installs " & name & " with babel " &
+      "and installs a workflow into ~/Library/Services/ for Finder."
 else:
   const
-    local_install = "Copies " & name & " to your ~/bin directory"
+    local_install = "Installs " & name & " with babel."
 
 
 template glob_rst(basedir: string = nil): expr =
@@ -115,13 +115,10 @@ proc build_all_rst_files(): seq[In_out] =
   result = to_seq(all_rst_files())
 
 
-task "local_install", local_install:
-  direshell("nimrod c --verbosity:0 -d:release", name)
+task "install", local_install:
+  direshell("babel install -y")
   when defined(macosx):
     build_workflow(true)
-
-  let dest = getHomeDir() / "bin" / exe_name
-  exe_name.copy_file_with_permissions(dest)
 
 
 proc doc() =
