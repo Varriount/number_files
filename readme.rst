@@ -82,8 +82,9 @@ Once the service has been installed, select a few files with Finder, ctrl+click
 on them and you should see somewhere a **Number files** service menu option.
 The Automator workflow doesn't use any fancy command line switches by default,
 but you can open the installed workflow at ``~/Library/Services`` and change
-the invocation parameters like you use from the command line (e.g. add
-``--length 6`` to force the numbers to be padded to six digits).
+the invocation parameters to what you like (e.g. add ``--length 6`` to force
+the numbers to be padded to six digits or change ``--from 1`` because you are a
+programmer and prefer to count from zero).
 
 
 Changes
