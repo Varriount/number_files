@@ -56,7 +56,12 @@ using the ``install`` task::
     $ nake install
 
 The ``install`` task will use Babel's mechanism to install the binary. On
-MacOSX this will also trigger installation of the Finder workflow.
+MacOSX this will also trigger installation of the Finder workflow.  Later, if
+you want to update you need to make sure git submodules get updated too::
+
+    $ cd number_files
+    $ git pull
+    $ git submodule update
 
 
 Binary installation
