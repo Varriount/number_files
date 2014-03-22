@@ -5,6 +5,10 @@
 nimcache/
 
 # Full paths.
+/docindex.html
+/docs/changes.html
+/license.html
 /nakefile
 /number_files
 /number_files.workflow/
+/readme.html

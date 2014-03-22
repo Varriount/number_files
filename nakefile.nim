@@ -24,7 +24,7 @@ template glob_rst(basedir: string): expr =
   to_seq(walk_files(basedir/"*.rst"))
 
 let
-  normal_rst_files = glob_rst(".")
+  normal_rst_files = concat(glob_rst("."), glob_rst("docs"))
 var
   CONFIGS = newStringTable(modeCaseInsensitive)
     ## Stores previously read configuration files.
