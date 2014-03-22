@@ -1,6 +1,6 @@
 [Package]
 name          = "number_files"
-version       = "0.2.0"
+version       = "0.2.1"
 author        = "Grzegorz Adam Hankiewicz"
 description   = """Command to add counter sufix/prefix to a list of files."""
 license       = "MIT"
