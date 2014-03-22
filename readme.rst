@@ -46,11 +46,18 @@ From source code
 ----------------
 
 Use `Nimrod's babel package manager <https://github.com/nimrod-code/babel>`_ to
-install locally the GitHub checkout::
+install the `argument_parser <https://github.com/gradha/argument_parser>`_ and
+`nake <https://github.com/fowlmouth/nake>`_ packages. Then compile and install
+using the ``local_install`` task::
 
+    $ babel install nake argument_parser
     $ git clone --recursive https://github.com/gradha/number_files/
     $ cd number_files
-    $ babel install
+    $ nake local_install
+
+The ``local_install`` task will first build the software, then try to copy it
+to ``~/bin``. If you don't have this directory the task will fail but you can
+still copy the generated binary to wherever you want.
 
 
 Binary installation
@@ -62,7 +69,8 @@ If you trust binaries and random strangers on the internet, you can go to
 ``.zip`` files attached to a specific release.
 
 The binary has been only tested on MacOSX 10.8 and 10.9, but should work on
-pretty much every Intel machine out there. Tell me if it doesn't.
+pretty much every Intel machine out there. Tell me if it doesn't. Put the
+binary file somewhere in your ``$PATH`` and invoke at will.
 
 To `install the Automator workflow
 <http://macosxautomation.com/automator/serviceinstall/index.html>`_ you only
