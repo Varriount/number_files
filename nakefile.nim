@@ -251,5 +251,5 @@ when defined(linux): os_task("linux")
 task "md5", "Computes md5 of files found in dist subdirectory.":
   echo "MD5 checksums:"
   for filename in walk_files(dist_dir/"*.zip"):
-    let v = filename.get_md5
+    let v = filename.read_file.get_md5
     echo "* ``", v, "`` ", filename.extract_filename

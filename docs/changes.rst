@@ -7,7 +7,7 @@ Changes for `Number files <https://github.com/gradha/number_files/>`_.
 v0.2.1 ????-??-??
 -----------------
 
-* Nothing yet.
+* `Fixed nake md5 task <https://github.com/gradha/number_files/issues/2>`_.
 
 v0.2.0 2014-03-22
 -----------------
