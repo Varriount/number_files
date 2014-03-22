@@ -59,7 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>~/Library/Services/number_files.workflow/Contents/number_files "$@"</string>
+					<string>~/Library/Services/number_files.workflow/Contents/number_files --from 1 -- "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

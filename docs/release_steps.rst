@@ -8,7 +8,7 @@ What to do for a new public release?
 * ``git flow release start versionname`` (versionname without v).
 * Update version numbers:
 
-  * Modify `README.rst <../README.rst>`_ (s/development/stable/).
+  * Modify `readme.rst <../readme.rst>`_ (s/development/stable/).
   * Modify `number_files.nim <../number_files.nim>`_.
   * Modify `number_files.babel <../number_files.babel>`_.
   * Update `docs/changes.rst <changes.rst>`_ with list of changes and
@@ -27,7 +27,7 @@ What to do for a new public release?
 * Use nake ``md5`` task to generate md5 values, add them to the release.
 * Increase version numbers, ``master`` branch gets +0.0.1.
 
-  * Modify `README.rst <../README.rst>`_ (s/development/stable/).
+  * Modify `readme.rst <../readme.rst>`_ (s/development/stable/).
   * Modify `number_files.nim <../number_files.nim>`_.
   * Modify `number_files.babel <../number_files.babel>`_.
   * Add to `docs/changes.rst <changes.rst>`_ development version with unknown

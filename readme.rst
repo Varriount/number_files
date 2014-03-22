@@ -48,16 +48,20 @@ From source code
 Use `Nimrod's babel package manager <https://github.com/nimrod-code/babel>`_ to
 install the `argument_parser <https://github.com/gradha/argument_parser>`_ and
 `nake <https://github.com/fowlmouth/nake>`_ packages. Then compile and install
-using the ``local_install`` task::
+using the ``install`` task::
 
     $ babel install nake argument_parser
     $ git clone --recursive https://github.com/gradha/number_files/
     $ cd number_files
-    $ nake local_install
+    $ nake install
 
-The ``local_install`` task will first build the software, then try to copy it
-to ``~/bin``. If you don't have this directory the task will fail but you can
-still copy the generated binary to wherever you want.
+The ``install`` task will use Babel's mechanism to install the binary. On
+MacOSX this will also trigger installation of the Finder workflow.  Later, if
+you want to update you need to make sure git submodules get updated too::
+
+    $ cd number_files
+    $ git pull
+    $ git submodule update
 
 
 Binary installation
@@ -74,21 +78,25 @@ binary file somewhere in your ``$PATH`` and invoke at will.
 
 To `install the Automator workflow
 <http://macosxautomation.com/automator/serviceinstall/index.html>`_ you only
-need to double click on the file and Automator will ask you if you want to
-install the service. After it has been installed, select a few files with
-Finder, ctrl+click on them and you should see somewhere a **Number files**
-service menu option. The Automator workflow doesn't use any fancy command line
-switches by default, but you can open the installed workflow at
-``~/Library/Services`` and change the invocation parameters like you use from
-the command line (e.g. add ``--length 6`` to force the numbers to be padded to
-six digits).
+need to double click on the file and Automator will ask you first if you trust
+the unsigned software (see `instructions on how to avoid this
+<http://macosxautomation.com/automator/serviceinstall/index.html>`_) and then
+if you want to install the service.
+
+Once the service has been installed, select a few files with Finder, ctrl+click
+on them and you should see somewhere a **Number files** service menu option.
+The Automator workflow doesn't use any fancy command line switches by default,
+but you can open the installed workflow at ``~/Library/Services`` and change
+the invocation parameters to what you like (e.g. add ``--length 6`` to force
+the numbers to be padded to six digits or change ``--from 1`` because you are a
+programmer and prefer to count from zero).
 
 
 Changes
 =======
 
-This is development version 0.1.1. For a list of changes see the
-`docs/changes.rst file <docs/changes.rst>`_.
+This is stable version 0.2.0. For a list of changes see the `docs/changes.rst
+file <docs/changes.rst>`_.
 
 
 Git branches

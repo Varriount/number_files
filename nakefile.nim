@@ -35,7 +35,8 @@ template glob_rst(basedir: string = nil): expr =
     to_seq(walk_files(basedir/"*.rst"))
 
 let
-  normal_rst_files = concat(glob_rst(), glob_rst("docs"))
+  normal_rst_files = concat(glob_rst(),
+    glob_rst("docs"), glob_rst("docs"/"dist"))
 var
   CONFIGS = newStringTable(modeCaseInsensitive)
     ## Stores previously read configuration files.
@@ -115,10 +116,50 @@ proc build_all_rst_files(): seq[In_out] =
   result = to_seq(all_rst_files())
 
 
+proc build_zip_html_files(): seq[In_out] =
+  ## Takes the rst files and generates them with doc_html and doc_txt dirs.
+  ##
+  ## The source file will reflect the local file to copy, and the destination
+  ## will be the destination directory inside the distribution zip.
+  ##
+  ## Also, files inside a dist_ prefix will be ignored, those are moved
+  ## specifically to the root.
+  result = @[]
+  # Add special dist files, renaming rst to txt in the process.
+  for rst in walk_files("docs"/"dist"/"*.rst"):
+    result.add((rst, change_file_ext(rst.extract_filename, "txt"), nil))
+    result.add((change_file_ext(rst, "html"),
+      change_file_ext(rst.extract_filename, "html"), nil))
+
+  proc add_path(list: var seq[In_out]; prefix, path, force_ext: string) =
+    ## Adds path to list with prefix only if it is not in a dist directory:
+    ##
+    ## If force_ext is not nil, it will be forced upon the destination filename.
+    ## Pass the extension without leading dot.
+    for dir in path.split(DirSep):
+      if dir == "dist": return
+    var x: In_out
+    x.src = path
+    if force_ext.isNil:
+      x.dest = prefix/path
+    else:
+      x.dest = change_file_ext(prefix/path, force_ext)
+    list.add(x)
+
+  # Add the txt files first.
+  for doc in all_rst_files():
+    let path = doc.src
+    result.add_path("doc_txt", path, "txt")
+  # Repeat with html version.
+  for doc in all_rst_files():
+    let path = doc.dest
+    result.add_path("doc_html", path, nil)
+
+
 task "install", local_install:
   direshell("babel install -y")
   when defined(macosx):
-    build_workflow(true)
+    build_workflow(false)
 
 
 proc doc() =
@@ -163,18 +204,18 @@ proc clean() =
 task "clean", "Removes temporal files, mostly.": clean()
 
 
-proc make_zip(dir_name, zip_name: string, files: seq[string]) =
+proc make_zip(dir_name, zip_name: string, files: seq[In_out]) =
   zip_name.remove_file
   var Z: TZipArchive
   if not Z.open(zip_name, fmWrite):
     quit("Couldn't open zip " & zip_name)
   try:
     echo "Adding files to ", zip_name
-    for filename in files:
-      let target = dir_name/filename
+    for file in files:
+      let target = (if file.dest.isNil: dir_name/file.src else: dir_name/file.dest)
       echo target
-      assert filename.exists_file
-      Z.addFile(target, filename)
+      assert file.src.exists_file
+      Z.addFile(target, file.src)
   finally:
     Z.close
   echo "Built ", zip_name, " sized ", zip_name.getFileSize, " bytes."
@@ -189,8 +230,9 @@ template os_task(define_name): stmt {.immediate.} =
     var
       dname = name & "-" & number_files.version_str & "-" & define_name
       zname = dname & ".zip"
-      html_files = mapIt(build_all_rst_files(), string, it.dest)
-    make_zip(dname, zname, concat(@[name], html_files))
+      html_files = build_zip_html_files()
+      exe: In_out = (name, nil, nil)
+    make_zip(dname, zname, concat(@[exe], html_files))
     zname.move_file(dist_dir/zname)
 
     when defined(macosx):
@@ -198,8 +240,9 @@ template os_task(define_name): stmt {.immediate.} =
       build_workflow()
       dname.insert(automator_prefix)
       zname.insert(automator_prefix)
-      make_zip(dname, zname,
-        concat(to_seq(walk_dir_rec(workflow_dest)), html_files))
+      make_zip(dname, zname, concat(
+        mapIt(to_seq(walk_dir_rec(workflow_dest)), In_out, (it, nil, nil)),
+        html_files))
       zname.move_file(dist_dir/zname)
 
 when defined(macosx): os_task("macosx")
