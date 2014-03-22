@@ -249,7 +249,13 @@ when defined(macosx): os_task("macosx")
 when defined(linux): os_task("linux")
 
 task "md5", "Computes md5 of files found in dist subdirectory.":
-  echo "MD5 checksums:"
+  echo """Add the following notes to the release info:
+
+Compiled with Nimrod version https://github.com/Araq/Nimrod/commit/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+
+[See the changes log](https://github.com/gradha/number_files/blob/v$1/docs/changes.rst).
+
+Binary MD5 checksums:""" % (number_files.version_str)
   for filename in walk_files(dist_dir/"*.zip"):
     let v = filename.read_file.get_md5
     echo "* ``", v, "`` ", filename.extract_filename
