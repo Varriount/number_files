@@ -8,6 +8,7 @@ nimcache/
 /dist/
 /docindex.html
 /docs/changes.html
+/docs/release_steps.html
 /license.html
 /nakefile
 /number_files
