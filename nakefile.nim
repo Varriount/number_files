@@ -1,5 +1,5 @@
 import nake, os, rester, strtabs, sequtils, htmlparser, xmltree, osproc,
-  zipfiles, number_files
+  zipfiles, number_files, md5
 
 type
   In_out = tuple[src, dest, options: string]
@@ -203,6 +203,11 @@ template os_task(define_name): stmt {.immediate.} =
         concat(to_seq(walk_dir_rec(workflow_dest)), html_files))
       zname.move_file(dist_dir/zname)
 
-
 when defined(macosx): os_task("macosx")
 when defined(linux): os_task("linux")
+
+task "md5", "Computes md5 of files found in dist subdirectory.":
+  echo "MD5 checksums:"
+  for filename in walk_files(dist_dir/"*.zip"):
+    let v = filename.get_md5
+    echo "* ``", v, "`` ", filename.extract_filename

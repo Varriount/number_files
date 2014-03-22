@@ -19,10 +19,12 @@ What to do for a new public release?
   ``v``).  When specifying the tag message, copy and paste a text version of
   the changes log into the message. Add rst item markers.
 * Move closed issues to the release milestone.
+* ``git push origin master stable --tags``.
 * Build binaries for macosx/linux with nake ``dist`` command.
 * Attach the binaries to the appropriate release at
   `https://github.com/gradha/number_files/releases
-  <https://github.com/gradha/number_files/releases>`_. Annotate md5 values.
+  <https://github.com/gradha/number_files/releases>`_.
+* Use nake ``md5`` task to generate md5 values, add them to the release.
 * Increase version numbers, ``master`` branch gets +0.0.1.
 
   * Modify `README.rst <../README.rst>`_ (s/development/stable/).
