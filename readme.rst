@@ -95,8 +95,8 @@ programmer and prefer to count from zero).
 Changes
 =======
 
-This is development version 0.1.1. For a list of changes see the
-`docs/changes.rst file <docs/changes.rst>`_.
+This is stable version 0.2.0. For a list of changes see the `docs/changes.rst
+file <docs/changes.rst>`_.
 
 
 Git branches
