@@ -4,7 +4,7 @@ Number files changes log
 
 Changes for `Number files <https://github.com/gradha/number_files/>`_.
 
-v0.1.1 ????-??-??
+v0.2.0 2014-03-22
 -----------------
 
-* Nothing yet.
+* Initial public release.
