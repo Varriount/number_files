@@ -1,41 +1,55 @@
-import nake, os, rester, strtabs, sequtils, htmlparser, xmltree, osproc
+import nake, os, rester, strtabs, sequtils, htmlparser, xmltree, osproc,
+  zipfiles, number_files
 
 type
   In_out = tuple[src, dest, options: string]
     ## The tuple only contains file paths.
 
 const
-  exe_name = "number_files"
+  name = "number_files"
   workflow_dest = "number_files.workflow"
   workflow_src = "workflow_template_dir"
-  workflow_bin = workflow_dest/"Contents"/exe_name
+  workflow_bin = workflow_dest/"Contents"/name
+  automator_prefix = "automator_"
+let
+  exe_name = name.change_file_ext(exe_ext)
 
 when defined(macosx):
   const
-    local_install = "Copies " & exe_name & " to your ~/bin directory " &
+    local_install = "Copies " & name & " to your ~/bin directory " &
       "and installs a workflow into ~/Library/Services/ for Finder"
 else:
   const
-    local_install = "Copies " & exe_name & " to your ~/bin directory"
+    local_install = "Copies " & name & " to your ~/bin directory"
 
 
-template glob_rst(basedir: string): expr =
+template glob_rst(basedir: string = nil): expr =
   ## Shortcut to simplify getting lists of files.
-  to_seq(walk_files(basedir/"*.rst"))
+  ##
+  ## Pass nil to iterate over rst files in the current directory. This avoids
+  ## prefixing the paths with "./" unnecessarily.
+  if baseDir.isNil:
+    to_seq(walk_files("*.rst"))
+  else:
+    to_seq(walk_files(basedir/"*.rst"))
 
 let
-  normal_rst_files = concat(glob_rst("."), glob_rst("docs"))
+  normal_rst_files = concat(glob_rst(), glob_rst("docs"))
 var
   CONFIGS = newStringTable(modeCaseInsensitive)
     ## Stores previously read configuration files.
 
 
-proc build_and_install_workflow() =
-  ## Generates a temporary workflow directory and calls open on it.
+proc build_workflow(do_install: bool = false) =
+  ## Generates a temporary workflow directory.
+  ##
+  ## If you pass true, calls open on the generated directory, which by default
+  ## tends to install the service in your user account after a GUI confirmation
+  ## dialog.
   workflow_dest.remove_dir
   workflow_src.copy_dir(workflow_dest)
-  exe_name.copy_file_with_permissions(workflow_bin)
-  shell("open", workflow_dest)
+  name.copy_file_with_permissions(workflow_bin)
+  if do_install: shell("open", workflow_dest)
 
 
 proc needs_refresh(target: In_out): bool =
@@ -101,16 +115,15 @@ proc build_all_rst_files(): seq[In_out] =
 
 
 task "local_install", local_install:
-  direshell("nimrod c -d:release", exe_name)
+  direshell("nimrod c -d:release", name)
   when defined(macosx):
-    build_and_install_workflow()
+    build_workflow(true)
 
   let dest = getHomeDir() / "bin" / exe_name
-  copyFile(exe_name, dest)
-  dest.setFilePermissions(exe_name.getFilePermissions)
+  exe_name.copy_file_with_permissions(dest)
 
 
-task "doc", "Generates HTML from the rst files.":
+proc doc() =
   # Generate html files from the rst docs.
   for f in build_all_rst_files():
     let (rst_file, html_file, options) = f
@@ -125,6 +138,8 @@ task "doc", "Generates HTML from the rst files.":
 
   echo "All docs generated"
 
+task "doc", "Generates HTML from the rst files.": doc()
+
 
 task "check_doc", "Validates rst format for a subset of documentation":
   for f in build_all_rst_files():
@@ -136,9 +151,53 @@ task "check_doc", "Validates rst format for a subset of documentation":
       echo output
 
 
-task "clean", "Removes temporal files, mainly":
+proc clean() =
   for path in walkDirRec("."):
     let (dir, name, ext) = splitFile(path)
     if ext == ".html":
       echo "Removing ", path
       path.removeFile()
+
+task "clean", "Removes temporal files, mainly": clean()
+
+
+proc make_zip(dir_name, zip_name: string, files: seq[string]) =
+  zip_name.remove_file
+  var Z: TZipArchive
+  if not Z.open(zip_name, fmWrite):
+    quit("Couldn't open zip " & zip_name)
+  try:
+    echo "Adding files to ", zip_name
+    for filename in files:
+      let target = dir_name/filename
+      echo target
+      assert filename.exists_file
+      Z.addFile(target, filename)
+  finally:
+    Z.close
+  echo "Built ", zip_name, " sized ", zip_name.getFileSize, " bytes."
+
+
+template os_task(define_name): stmt {.immediate.} =
+  task "dist", "Generate distribution binary for " & define_name:
+    clean()
+    doc()
+
+    direShell("nimrod c -d:release --out:" & name & " " & name & ".nim")
+    var
+      dname = name & "-" & number_files.version_str & "-" & define_name
+      zname = dname & ".zip"
+      html_files = mapIt(build_all_rst_files(), string, it.dest)
+    make_zip(dname, zname, concat(@[name], html_files))
+
+    when defined(macosx):
+      # Additional workflow building for macosx.
+      build_workflow()
+      dname.insert(automator_prefix)
+      zname.insert(automator_prefix)
+      make_zip(dname, zname,
+        concat(to_seq(walk_dir_rec(workflow_dest)), html_files))
+
+
+when defined(macosx): os_task("macosx")
+when defined(linux): os_task("linux")

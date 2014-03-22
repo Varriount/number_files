@@ -5,10 +5,12 @@
 nimcache/
 
 # Full paths.
+/automator_number_files-*
 /docindex.html
 /docs/changes.html
 /license.html
 /nakefile
 /number_files
+/number_files-*zip
 /number_files.workflow/
 /readme.html
