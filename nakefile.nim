@@ -91,8 +91,9 @@ proc change_rst_links_to_html(html_file: string) =
     if not href.isNil:
       let (dir, filename, ext) = splitFile(href)
       if cmpIgnoreCase(ext, ".rst") == 0:
-        a.attrs["href"] = dir / filename & ".html"
-        DID_CHANGE = true
+        if not dir.starts_with("http"):
+          a.attrs["href"] = dir / filename & ".html"
+          DID_CHANGE = true
 
   if DID_CHANGE:
     writeFile(html_file, $html)

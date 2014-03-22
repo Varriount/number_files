@@ -26,8 +26,8 @@ What to do for a new public release?
   <https://github.com/gradha/number_files/releases>`_.
 * Use nake ``md5`` task to generate md5 values, add them to the release.
 * Follow the tag link of the release and create a hyper link to its changes log
-  on (e.g.
-  https://github.com/gradha/number_files/blob/v0.2.0/docs/changes.rst).
+  on (e.g. `https://github.com/gradha/number_files/blob/v0.2.0/docs/changes.rst
+  <https://github.com/gradha/number_files/blob/v0.2.0/docs/changes.rst>`_).
 * Also add to the release text the Nimrod compiler version noted in the release
   issue.
 * Increase version numbers, ``master`` branch gets +0.0.1.
