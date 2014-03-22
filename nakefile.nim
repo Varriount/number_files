@@ -11,6 +11,7 @@ const
   workflow_src = "workflow_template_dir"
   workflow_bin = workflow_dest/"Contents"/name
   automator_prefix = "automator_"
+  dist_dir = "dist"
 let
   exe_name = name.change_file_ext(exe_ext)
 
@@ -115,7 +116,7 @@ proc build_all_rst_files(): seq[In_out] =
 
 
 task "local_install", local_install:
-  direshell("nimrod c -d:release", name)
+  direshell("nimrod c --verbosity:0 -d:release", name)
   when defined(macosx):
     build_workflow(true)
 
@@ -143,7 +144,7 @@ task "doc", "Generates HTML from the rst files.": doc()
 
 task "check_doc", "Validates rst format for a subset of documentation":
   for f in build_all_rst_files():
-    let (rst_file, html_file, options) = f
+    let rst_file = f.src
     echo "Testing ", rst_file
     let (output, exit) = execCmdEx("rst2html.py " & rst_file & " /dev/null")
     if output.len > 0 or exit != 0:
@@ -152,13 +153,15 @@ task "check_doc", "Validates rst format for a subset of documentation":
 
 
 proc clean() =
+  dist_dir.remove_dir
+  dist_dir.create_dir
   for path in walkDirRec("."):
-    let (dir, name, ext) = splitFile(path)
+    let ext = splitFile(path).ext
     if ext == ".html":
       echo "Removing ", path
       path.removeFile()
 
-task "clean", "Removes temporal files, mainly": clean()
+task "clean", "Removes temporal files, mostly.": clean()
 
 
 proc make_zip(dir_name, zip_name: string, files: seq[string]) =
@@ -183,12 +186,13 @@ template os_task(define_name): stmt {.immediate.} =
     clean()
     doc()
 
-    direShell("nimrod c -d:release --out:" & name & " " & name & ".nim")
+    direShell("nimrod c --verbosity:0 -d:release --out:" & name, name & ".nim")
     var
       dname = name & "-" & number_files.version_str & "-" & define_name
       zname = dname & ".zip"
       html_files = mapIt(build_all_rst_files(), string, it.dest)
     make_zip(dname, zname, concat(@[name], html_files))
+    zname.move_file(dist_dir/zname)
 
     when defined(macosx):
       # Additional workflow building for macosx.
@@ -197,6 +201,7 @@ template os_task(define_name): stmt {.immediate.} =
       zname.insert(automator_prefix)
       make_zip(dname, zname,
         concat(to_seq(walk_dir_rec(workflow_dest)), html_files))
+      zname.move_file(dist_dir/zname)
 
 
 when defined(macosx): os_task("macosx")

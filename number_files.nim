@@ -121,9 +121,12 @@ proc number_files(input_files: seq[string], suffix: bool,
     counter += 1
 
 
-when isMainModule:
+proc main() =
   # Gets parameters and extracts them for easy access.
   process_commandline()
 
   number_files(mapIt(G.params.positional_parameters, string, it.str_val),
     G.suffix, G.separator, G.padding, G.start)
+
+when isMainModule:
+  main()
