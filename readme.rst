@@ -35,6 +35,9 @@ Command line switches
 -l, --length INT         Minimum length of the number mask, padded to zeros.
 -f, --from INT           Value of the first number assigned, by default zero.
 
+There is not much more than that, but if you are curious you can also check the
+`docindex file <docindex.rst>`_ for internal documentation.
+
 
 Installation
 ============
@@ -61,14 +64,16 @@ If you trust binaries and random strangers on the internet, you can go to
 The binary has been only tested on MacOSX 10.8 and 10.9, but should work on
 pretty much every Intel machine out there. Tell me if it doesn't.
 
-To install the Automator workflow you only need to double click on the file and
-Automator will ask you if you want to install the service. After it has been
-installed, select a few files with Finder, ctrl+click on them and you should
-see somewhere a **Number files** service menu option. The Automator workflow
-doesn't use any fancy command line switches by default, but you can open the
-installed workflow at ``~/Library/Services`` and change the invocation
-parameters like you use from the command line (e.g. add ``--length 6`` to force
-the numbers to be padded to six digits).
+To `install the Automator workflow
+<http://macosxautomation.com/automator/serviceinstall/index.html>`_ you only
+need to double click on the file and Automator will ask you if you want to
+install the service. After it has been installed, select a few files with
+Finder, ctrl+click on them and you should see somewhere a **Number files**
+service menu option. The Automator workflow doesn't use any fancy command line
+switches by default, but you can open the installed workflow at
+``~/Library/Services`` and change the invocation parameters like you use from
+the command line (e.g. add ``--length 6`` to force the numbers to be padded to
+six digits).
 
 
 Changes
