@@ -4,7 +4,7 @@ type
   Tglobal = object ## \
     ## Holds all the global variables of the process.
     params: Tcommandline_results
-    postfix: bool ## True if the numbers are to be added postfix.
+    suffix: bool ## True if the numbers are to be added as suffix.
     separator: string ## String used to join the number to the filename.
     padding: int ## Number of minimum number padding.
     start: int ## Value to start counting at.
@@ -36,8 +36,8 @@ const
   param_version = @["-v", "--version"]
   help_version = "Displays the current version and exists."
 
-  param_postfix = @["-p", "--postfix"]
-  help_postfix = "Add number before extension instead of prefixing name."
+  param_suffix = @["-p", "--suffix"]
+  help_suffix = "Add number before extension instead of prefixing name."
 
   param_separator = @["-s", "--separator"]
   help_separator = "Separator string between filename and number."
@@ -56,8 +56,8 @@ proc process_commandline() =
     names = param_help, help_text = help_help))
   PARAMS.add(new_parameter_specification(names = param_version,
     help_text = help_version))
-  PARAMS.add(new_parameter_specification(names = param_postfix,
-    help_text = help_postfix))
+  PARAMS.add(new_parameter_specification(names = param_suffix,
+    help_text = help_suffix))
   PARAMS.add(new_parameter_specification(PK_STRING, names = param_separator,
     help_text = help_separator))
   PARAMS.add(new_parameter_specification(PK_INT, names = param_length,
@@ -71,8 +71,8 @@ proc process_commandline() =
     echo "Version ", version_str
     quit()
 
-  if G.params.options.has_key(param_postfix[0]):
-    G.postfix = true
+  if G.params.options.has_key(param_suffix[0]):
+    G.suffix = true
 
   if G.params.options.has_key(param_separator[0]):
     G.separator = G.params.options[param_separator[0]].str_val
@@ -99,7 +99,7 @@ proc process_commandline() =
   assert G.padding > 0
 
 
-proc number_files(input_files: seq[string], postfix: bool,
+proc number_files(input_files: seq[string], suffix: bool,
     sep: string, padding, start: int) =
   ## Numbers input_files from start to infinite.
   if input_files.len < 1: return
@@ -114,7 +114,7 @@ proc number_files(input_files: seq[string], postfix: bool,
     let
       value = $counter
       str = repeat_char(max(0, padding - value.len), '0') & value
-      target = if postfix: name & sep & str else: str & sep & name
+      target = if suffix: name & sep & str else: str & sep & name
     echo "'" & name & ext & "' -> '" & target & ext & "'"
     let dest = dir/(target & ext)
     path.move_file(dest)
@@ -126,4 +126,4 @@ when isMainModule:
   process_commandline()
 
   number_files(mapIt(G.params.positional_parameters, string, it.str_val),
-    G.postfix, G.separator, G.padding, G.start)
+    G.suffix, G.separator, G.padding, G.start)
