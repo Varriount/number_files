@@ -37,5 +37,5 @@ What to do for a new public release?
   development version. Refs #release issue*.
 * ``git push origin master stable --tags``.
 * Close the dummy release issue.
-* Announce at http://forum.nimrod-lang.org/.
+* Announce at http://forum.nimrod-lang.org/t/403.
 * Close the milestone on github.
