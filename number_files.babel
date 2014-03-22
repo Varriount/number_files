@@ -2,7 +2,7 @@
 name          = "number_files"
 version       = "0.2.1"
 author        = "Grzegorz Adam Hankiewicz"
-description   = """Command to add counter sufix/prefix to a list of files."""
+description   = """Command to add counter suffix/prefix to a list of files."""
 license       = "MIT"
 bin           = "number_files"
 InstallFiles = """
