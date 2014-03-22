@@ -153,6 +153,7 @@ task "check_doc", "Validates rst format for a subset of documentation":
 
 
 proc clean() =
+  exe_name.remove_file
   dist_dir.remove_dir
   dist_dir.create_dir
   for path in walkDirRec("."):
@@ -160,6 +161,7 @@ proc clean() =
     if ext == ".html":
       echo "Removing ", path
       path.removeFile()
+  echo "Temporary files cleaned"
 
 task "clean", "Removes temporal files, mostly.": clean()
 
