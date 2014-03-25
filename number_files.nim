@@ -16,8 +16,8 @@ G.separator = " "
 G.padding = 2
 
 const
-  version_str* = "0.2.2" ## Program version as a string.
-  version_int* = (major: 0, minor: 2, maintenance: 2) ## \
+  version_str* = "0.2.3" ## Program version as a string.
+  version_int* = (major: 0, minor: 2, maintenance: 3) ## \
   ## Program version as an integer tuple.
   ##
   ## Major version changes mean significant new features or a break in
