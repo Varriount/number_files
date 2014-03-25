@@ -21,6 +21,7 @@ readme.rst
 InstallDirs = """
 
 external/quicklook-rest-with-nimrod
+workflow_template_dir
 
 """
 

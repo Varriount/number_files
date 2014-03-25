@@ -42,6 +42,11 @@ var
     ## Stores previously read configuration files.
 
 
+proc compile() =
+  echo "Compiling ", name, "…"
+  direShell("nimrod c --verbosity:0 -d:release --out:" & name, name & ".nim")
+
+
 proc build_workflow(do_install: bool = false) =
   ## Generates a temporary workflow directory.
   ##
@@ -50,6 +55,7 @@ proc build_workflow(do_install: bool = false) =
   ## dialog.
   workflow_dest.remove_dir
   workflow_src.copy_dir(workflow_dest)
+  if not name.exists_file: compile()
   name.copy_file_with_permissions(workflow_bin)
   if do_install: shell("open", workflow_dest)
 
@@ -157,11 +163,19 @@ proc build_zip_html_files(): seq[In_out] =
     result.add_path("doc_html", path, nil)
 
 
+proc install_workflow() =
+  when defined(macosx):
+    build_workflow(true)
+  else:
+    echo "Sorry, Automator workflow is only available on MacOSX."
+
 task "install", local_install:
   direshell("babel install -y")
   when defined(macosx):
-    build_workflow(false)
+    install_workflow()
 
+task "install_workflow", "Installs the workflow service on MacOSX.":
+  install_workflow()
 
 proc doc() =
   # Generate html files from the rst docs.
@@ -227,7 +241,7 @@ template os_task(define_name): stmt {.immediate.} =
     clean()
     doc()
 
-    direShell("nimrod c --verbosity:0 -d:release --out:" & name, name & ".nim")
+    compile()
     var
       dname = name & "-" & number_files.version_str & "-" & define_name
       zname = dname & ".zip"
