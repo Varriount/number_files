@@ -39,21 +39,38 @@ There is not much more than that, but if you are curious you can also check the
 `docindex file <docindex.rst>`_ for internal documentation.
 
 
-Installation
-============
+Installing from source code
+===========================
 
-From source code
-----------------
+Stable version
+--------------
 
-Use `Nimrod's babel package manager <https://github.com/nimrod-code/babel>`_ to
-install the `argument_parser <https://github.com/gradha/argument_parser>`_ and
-`nake <https://github.com/fowlmouth/nake>`_ packages. Then compile and install
-using the ``install`` task::
+Install the `Nimrod compiler <http://nimrod-lang.org>`_. Then use `Nimrod's
+babel package manager <https://github.com/nimrod-code/babel>`_ to install the
+binary::
+
+    $ babel update
+    $ babel install number_files
+
+This will install the ``number_files`` command into Babel's binary directory.
+If you are running MacOSX and you want to install the Automator workflow, type
+the following commands::
+
+    $ cd `babel path number_files`
+    $ nake install_workflow
+
+
+Development version
+-------------------
+
+Install the `Nimrod compiler <http://nimrod-lang.org>`_. Then use `Nimrod's
+babel package manager <https://github.com/nimrod-code/babel>`_ to install
+locally the github checkout::
 
     $ babel install nake argument_parser
     $ git clone --recursive https://github.com/gradha/number_files/
     $ cd number_files
-    $ nake install
+    $ babel install
 
 The ``install`` task will use Babel's mechanism to install the binary. On
 MacOSX this will also trigger installation of the Finder workflow.  Later, if
@@ -64,8 +81,8 @@ you want to update you need to make sure git submodules get updated too::
     $ git submodule update
 
 
-Binary installation
--------------------
+Installing prebuilt binaries
+----------------------------
 
 If you trust binaries and random strangers on the internet, you can go to
 `https://github.com/gradha/number_files/releases
@@ -95,8 +112,8 @@ programmer and prefer to count from zero).
 Changes
 =======
 
-This is stable version 0.2.0. For a list of changes see the `docs/changes.rst
-file <docs/changes.rst>`_.
+This is stable version 0.2.2. For a list of changes see the
+`docs/changes.rst file <docs/changes.rst>`_.
 
 
 Git branches
