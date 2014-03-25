@@ -4,7 +4,7 @@ Number files changes log
 
 Changes for `Number files <https://github.com/gradha/number_files/>`_.
 
-v0.2.1 ????-??-??
+v0.2.2 2014-03-25
 -----------------
 
 * `Fixed nake md5 task <https://github.com/gradha/number_files/issues/2>`_.
